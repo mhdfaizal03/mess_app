@@ -14,7 +14,7 @@ class BottomAppBarIcons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-        notchMargin: 10,
+        notchMargin: 8,
         height: mq.height * .069,
         color: Theme.of(context).colorScheme.secondary,
         shape: const CircularNotchedRectangle(),

@@ -1,5 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:mess_app/screens/authentication/login_page.dart';
 import 'package:mess_app/screens/splash_screen.dart';
 import 'package:mess_app/themes/dark_theme.dart';
 import 'package:mess_app/themes/provider.dart';

@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        extendBody: true,
         floatingActionButton: FloatingActionButton(
           onPressed: () async {},
           child: Icon(
@@ -53,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 //when data loading
                 case ConnectionState.waiting:
                 case ConnectionState.none:
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: Container());
 
                 //when all data is loaded
                 case ConnectionState.active:

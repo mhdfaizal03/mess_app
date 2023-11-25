@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "368734514327",
+    "firebase_url": "https://messchat-ad1cd-default-rtdb.firebaseio.com",
+    "project_id": "messchat-ad1cd",
+    "storage_bucket": "messchat-ad1cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:368734514327:android:eb2f1f1aecdb98d8d08dd2",
+        "android_client_info": {
+          "package_name": "com.example.mess_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "368734514327-0ldff9a4npgr67cof1cs5c5gukfpdnj3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mess_app",
+            "certificate_hash": "595eab915ce70790b9659855358aedf7115d62e2"
+          }
+        },
+        {
+          "client_id": "368734514327-4eq4ranji370tertgrsvsnc7jholn361.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6UxrLNb3bIRom1Qe7G60olQ8D4M3b-xw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "368734514327-4eq4ranji370tertgrsvsnc7jholn361.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "368734514327-fq4d8duvsef9dag93ju5c9b1m4qet8v3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.messApp.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

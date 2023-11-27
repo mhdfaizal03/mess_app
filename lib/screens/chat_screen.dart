@@ -62,7 +62,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 image: DecorationImage(
                     image: Theme.of(context).colorScheme.brightness ==
                             Brightness.light
-                        ? const AssetImage('images/bglight.png')
+                        ? const AssetImage('images/bglight.jpg')
                         : const AssetImage('images/bgDark.jpg'),
                     fit: BoxFit.cover)),
             child: Column(

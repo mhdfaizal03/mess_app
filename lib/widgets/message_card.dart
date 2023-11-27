@@ -136,7 +136,7 @@ class _MessageCardState extends State<MessageCard> {
               widget.message.read.isNotEmpty
                   ? Positioned(
                       bottom: 5,
-                      right: 14,
+                      right: 15,
                       child: Icon(
                         Icons.done_all_rounded,
                         color: Colors.blue,
@@ -145,7 +145,7 @@ class _MessageCardState extends State<MessageCard> {
                     )
                   : Positioned(
                       bottom: 5,
-                      right: 14,
+                      right: 15,
                       child: Icon(
                         Icons.done_rounded,
                         color: Colors.grey[800],

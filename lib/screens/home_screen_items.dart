@@ -19,6 +19,7 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
   void initState() {
     super.initState();
     APISystem.getSelfInfo();
+
     SystemChannels.lifecycle.setMessageHandler((message) {
       log('message : $message');
 

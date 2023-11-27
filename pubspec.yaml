@@ -34,23 +34,45 @@ dependencies:
 
  #for using cupertino icons
   cupertino_icons: ^1.0.2
+
+  #for state management
   provider: ^6.0.5
+
   # flutter_launcher_icons: ^0.13.1
+
   #for integrating firebase
   firebase_core: ^2.17.0
+
   #for handling firebase authentication
   firebase_auth: ^4.10.1
+
   #for handling google sign in
   google_sign_in: ^6.1.5
+
   # for adding svg pictures into the app
   svg_flutter: ^0.0.1
+
   #for accessing cloud firestore database
   cloud_firestore: ^4.10.0
+
+  #for showing network image
   cached_network_image: ^3.3.0
+
+  #for picking image from storage
   image_picker: ^1.0.4
+
+  #for accessing firebase storage
   firebase_storage: ^11.4.0
+
+  #for accessing firebase messaging
   firebase_messaging: ^14.7.5
+
+  #for access emoji on the feature of chat screen
   emoji_picker_flutter: ^1.6.3
+
+  #for calling rest APIs
+  http: ^1.1.0
+  flutter_notification_channel: ^2.0.0
 
 dev_dependencies:
   flutter_test:

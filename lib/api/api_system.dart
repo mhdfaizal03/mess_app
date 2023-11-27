@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart';
 import 'package:mess_app/models/message.dart';
 import 'package:mess_app/models/user_chat.dart';
 
@@ -38,10 +40,19 @@ class APISystem {
 
   static Future<void> getFireBaseMessageToken() async {
     await fMessaging.requestPermission();
-   await fMessaging.getToken().then((t) {
+    await fMessaging.getToken().then((t) {
       if (t != null) {
         me.pushToken = t;
         log('push_token $t');
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      log('Got a message whilst in the foreground!');
+      log('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        log('Message also contained a notification: ${message.notification}');
       }
     });
   }
@@ -53,10 +64,11 @@ class APISystem {
 
   //for getting currnet user info
   static Future<void> getSelfInfo() async {
-    await firestore.collection('users').doc(user.uid).get().then((user) {
+    await firestore.collection('users').doc(user.uid).get().then((user) async {
       if (user.exists) {
         me = UserChat.fromJson(user.data()!);
-        getFireBaseMessageToken();
+        await getFireBaseMessageToken();
+        APISystem.updateActiveStatus(true);
         log('My data : ${user.data()}');
       } else {
         userCreate().then(
@@ -136,6 +148,32 @@ class APISystem {
     });
   }
 
+  static Future<void> sentPushNotification(
+      UserChat userChat, String msg) async {
+    try {
+      final body = {
+        "to": userChat.pushToken,
+        "notofication": {
+          "title": userChat.name,
+          "body": msg,
+          "android_channel_id": "chats"
+        },
+        "data": {"some_data ": "User ID ${me.id}"}
+      };
+      var res = await post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+          headers: {
+            HttpHeaders.contentTypeHeader: 'application/json',
+            HttpHeaders.authorizationHeader:
+                'key=AAAAVdpKLJc:APA91bHmWLS8PvY0lHN79QQ6EUcBCzhgqVRMEbnQwFQ2P6902ckVu93qggKlsqJ8ETKA0D555smbw5Kt7zhEbVXXDA8MDMSkL5RjFCWoI6pH2onXsdk-u4l5VqidIIi3_DUdUOYnPYVd',
+          },
+          body: jsonEncode(body));
+      log('Response status: ${res.statusCode}');
+      log('Response body: ${res.body}');
+    } catch (e) {
+      log('\nsend push notificationError $e');
+    }
+  }
+
   //********************used for chat purpose******************//
 
   //getting conversation id
@@ -169,7 +207,8 @@ class APISystem {
 
     final ref = firestore
         .collection('chats/${getConversationID(userChat.id)}/messages/');
-    await ref.doc(time).set(message.toJson());
+    await ref.doc(time).set(message.toJson()).then((value) =>
+        sentPushNotification(userChat, type == Type.text ? msg : 'image'));
   }
 
   //for use to know last message(bluetick)

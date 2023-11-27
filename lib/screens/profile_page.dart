@@ -49,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     CircleAvatar(
                       radius: 100,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       child: Padding(
                         padding: const EdgeInsets.all(3.0),
                         child: ClipRRect(

@@ -73,6 +73,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   children: [
                     CircleAvatar(
                       radius: 100,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       child: Padding(
                         padding: const EdgeInsets.all(3.0),
                         child: ClipRRect(

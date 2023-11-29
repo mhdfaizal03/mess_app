@@ -98,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Padding(
                 padding: EdgeInsets.only(top: mq.height * 0.1),
                 child: const Text(
-                  'Welcome to MessApp',
+                  'Welcome to Chatifly',
                   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
               ),

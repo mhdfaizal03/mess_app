@@ -33,9 +33,9 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
         }
       }
 
-      // if (message.toString().contains('inactive')) {
-      //   APISystem.updateActiveStatus(false);
-      // }
+      if (message.toString().contains('inactive')) {
+        APISystem.updateActiveStatus(false);
+      }
 
       return Future.value(message);
     });

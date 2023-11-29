@@ -38,7 +38,7 @@ dependencies:
   #for state management
   provider: ^6.0.5
 
-  # flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.13.1
 
   #for integrating firebase
   firebase_core: ^2.17.0
@@ -78,12 +78,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-# flutter_launcher_icons:
-#   android: "ic_launcher"
-#   ios: true
-#   image_path: "images/icon.png"
-#   min_sdk_android: 21
-#   remove_alpha_ios: true
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "images/icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
 
 
   flutter_lints: ^2.0.0

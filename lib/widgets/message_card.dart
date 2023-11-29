@@ -16,9 +16,13 @@ class MessageCard extends StatefulWidget {
 class _MessageCardState extends State<MessageCard> {
   @override
   Widget build(BuildContext context) {
-    return APISystem.user.uid == widget.message.fromId
-        ? _sendMessage()
-        : _receiveMessage();
+    bool isMe = APISystem.user.uid == widget.message.fromId;
+    return InkWell(
+        onLongPress: () {
+          
+          print("long pressed");
+        },
+        child: isMe ? _sendMessage() : _receiveMessage());
   }
 
   Widget _receiveMessage() {

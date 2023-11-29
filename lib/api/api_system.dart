@@ -146,6 +146,14 @@ class APISystem {
       'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
       'push_token': me.pushToken,
     });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      log('got a message whitelist in the foreground');
+      log('message data ${message.data}');
+
+      if (message.notification != null) {
+        log('message also contained a notification : ${message.notification}');
+      }
+    });
   }
 
   static Future<void> sentPushNotification(

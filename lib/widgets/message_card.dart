@@ -19,8 +19,7 @@ class _MessageCardState extends State<MessageCard> {
     bool isMe = APISystem.user.uid == widget.message.fromId;
     return InkWell(
         onLongPress: () {
-          
-          print("long pressed");
+          _showBottomSheet();
         },
         child: isMe ? _sendMessage() : _receiveMessage());
   }
@@ -70,7 +69,7 @@ class _MessageCardState extends State<MessageCard> {
           MyDate.getFormatedTime(context: context, time: widget.message.sent),
           style: TextStyle(
               color: Theme.of(context).colorScheme.onSecondary,
-              fontSize: mq.height * .011),
+              fontSize: mq.height * .013),
         )
       ],
     );
@@ -161,5 +160,30 @@ class _MessageCardState extends State<MessageCard> {
         ),
       ],
     );
+  }
+
+  void _showBottomSheet() {
+    showModalBottomSheet(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        context: context,
+        builder: (_) {
+          return ListView(
+            shrinkWrap: true,
+            children: [
+              const Text(
+                'Select Profile Picture',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                height: mq.height * .02,
+              ),
+            ],
+          );
+        });
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
-import 'package:flutter_notification_channel/notification_visibility.dart';
 import 'package:mess_app/screens/splash_screen.dart';
 import 'package:mess_app/themes/dark_theme.dart';
 import 'package:mess_app/themes/provider.dart';
@@ -46,7 +45,7 @@ class MyApp extends StatelessWidget {
 _initializeFirebase() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform
   );
 
   var result = await FlutterNotificationChannel.registerNotificationChannel(

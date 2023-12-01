@@ -13,6 +13,6 @@ ThemeData lightTheme = ThemeData(
   colorScheme: ColorScheme.light(
       background: Colors.white,
       primary: Colors.black,
-      secondary: Colors.grey[300]!,
-      onSecondary: Colors.grey[500]!),
+      secondary: const Color.fromRGBO(161, 173, 245, 0.8),
+      onSecondary: Colors.grey[600]!),
 );

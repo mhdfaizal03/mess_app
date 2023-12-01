@@ -82,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: const Icon(Icons.camera_alt_rounded),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 SizedBox(
@@ -99,8 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       onPressed: () {
                         Clipboard.setData(ClipboardData(text: widget.user.id));
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.onBackground,
+                            backgroundColor: Theme.of(context).colorScheme.onBackground,
                             behavior: SnackBarBehavior.floating,
                             margin: const EdgeInsets.symmetric(
                                 horizontal: 100, vertical: 50),

@@ -28,9 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         extendBody: true,
         floatingActionButton: FloatingActionButton(
-          onPressed: () async {},
+          onPressed: () async {
+            //onwork
+          },
           child: Icon(
             CupertinoIcons.person_2,
             color: Theme.of(context).colorScheme.primary,
@@ -50,22 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   user: APISystem.me,
                 ),
               ];
-              switch (snapshot.connectionState) {
-                //when data loading
-                case ConnectionState.waiting:
-                case ConnectionState.none:
-                  return Center(child: Container());
-
-                //when all data is loaded
-                case ConnectionState.active:
-                case ConnectionState.done:
-                  final data = snapshot.data?.docs;
-                  list =
-                      data?.map((e) => UserChat.fromJson(e.data())).toList() ??
-                          [];
-
-                  return pages[index];
-              }
+              return pages[index];
             }));
   }
 }

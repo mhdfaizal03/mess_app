@@ -6,7 +6,7 @@ import 'package:mess_app/main.dart';
 import 'package:mess_app/screens/authentication/login_page.dart';
 import 'package:mess_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:mess_app/themes/light_theme.dart';
+// import 'package:mess_app/themes/light_theme.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

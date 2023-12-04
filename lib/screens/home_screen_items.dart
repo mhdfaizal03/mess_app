@@ -1,9 +1,8 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mess_app/api/api_system.dart';
-// import 'package:mess_app/main.dart';
+import 'package:mess_app/main.dart';
 import 'package:mess_app/models/user_chat.dart';
 import 'package:mess_app/widgets/chat_list.dart';
 
@@ -65,69 +64,78 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
           body: CustomScrollView(
             slivers: [
               SliverAppBar(
-                floating: false,
+                floating: true,
+                pinned: true,
+                stretch: true,
+                elevation: 4,
                 automaticallyImplyLeading: false,
-                backgroundColor: Theme.of(context).colorScheme.background,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 flexibleSpace: FlexibleSpaceBar(
-                    titlePadding: const EdgeInsets.all(20),
+                    stretchModes: const <StretchMode>[
+                      StretchMode.zoomBackground,
+                    ],
+                    titlePadding: const EdgeInsets.all(10),
                     title: _isSearch
                         ? SizedBox(
-                            height: 30,
-                            child: TextField(
-                              controller: _searchController,
-                              autofocus: true,
-                              style: const TextStyle(
-                                  fontSize: 13, letterSpacing: 0.5),
-                              onChanged: (value) {
-                                _searchList.clear();
+                            height: 40,
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 2000),
+                              child: TextField(
+                                controller: _searchController,
+                                autofocus: true,
+                                style: const TextStyle(
+                                    fontSize: 10, letterSpacing: 0.5),
+                                onChanged: (value) {
+                                  _searchList.clear();
 
-                                for (var i in list) {
-                                  if (i.name
-                                          .toLowerCase()
-                                          .contains(value.toLowerCase()) ||
-                                      i.email
-                                          .toLowerCase()
-                                          .contains(value.toLowerCase()) ||
-                                      i.id
-                                          .toLowerCase()
-                                          .contains(value.toLowerCase())) {
-                                    _searchList.add(i);
-                                    setState(() {
-                                      _searchList;
-                                    });
-                                  }
-                                }
-                              },
-                              decoration: InputDecoration(
-                                prefixIcon: const Icon(
-                                  Icons.search,
-                                  size: 15,
-                                ),
-                                hintText: 'Search here',
-                                suffixIcon: IconButton(
-                                    onPressed: () {
+                                  for (var i in list) {
+                                    if (i.name
+                                            .toLowerCase()
+                                            .contains(value.toLowerCase()) ||
+                                        i.email
+                                            .toLowerCase()
+                                            .contains(value.toLowerCase()) ||
+                                        i.id
+                                            .toLowerCase()
+                                            .contains(value.toLowerCase())) {
+                                      _searchList.add(i);
                                       setState(() {
-                                        if (_searchController.text
-                                            .contains(_searchController.text)) {
-                                          _searchController.clear();
-                                          if (_isSearch == true) {
-                                            _isSearch = false;
-                                          }
-                                        }
-                                        // _searchList.clear();
+                                        _searchList;
                                       });
-                                    },
-                                    icon: const Icon(
-                                      Icons.close,
-                                      size: 15,
-                                    )),
-                                border: UnderlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  borderSide: BorderSide.none,
+                                    }
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  prefixIcon: const Icon(
+                                    Icons.search_rounded,
+                                    size: 20,
+                                  ),
+                                  hintText: 'Search here',
+                                  suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          if (_searchController.text.contains(
+                                              _searchController.text)) {
+                                            _searchController.clear();
+                                            if (_isSearch == true) {
+                                              _isSearch = false;
+                                            }
+                                          }
+                                          // _searchList.clear();
+                                        });
+                                      },
+                                      icon: const Icon(
+                                        Icons.close,
+                                        size: 20,
+                                      )),
+                                  border: UnderlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
-                                filled: true,
-                                fillColor:
-                                    Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                           )
@@ -137,7 +145,7 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
                               Text(
                                 'Chats',
                                 style: TextStyle(
-                                    fontSize: 28,
+                                    fontSize: 30,
                                     color:
                                         Theme.of(context).colorScheme.primary),
                               ),
@@ -150,16 +158,16 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
                                     });
                                   },
                                   icon: const Icon(
-                                    Icons.search,
-                                    size: 20,
+                                    Icons.search_rounded,
+                                    size: 25,
                                   ))
                             ],
                           )),
-                expandedHeight: 160,
+                expandedHeight: 150,
               ),
               SliverToBoxAdapter(
                 child: SizedBox(
-                  height: 600,
+                  height: mq.height,
                   child: StreamBuilder(
                       stream: APISystem.getAllUsers(),
                       builder: (context, snapshot) {
@@ -204,126 +212,6 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
               )
             ],
           ),
-          // Column(
-          //   children: [
-          //     Container(
-          //       height: mq.height * .15,
-          //       color: Theme.of(context).colorScheme.secondary,
-          //       child: Padding(
-          //         padding: EdgeInsets.only(
-          //             top: mq.height * 0.02,
-          //             right: mq.height * 0.02,
-          //             left: mq.height * 0.02),
-          //         child: _isSearch
-          //             ? Center(
-          //                 child: TextField(
-          //                   autofocus: true,
-          //                   style: const TextStyle(
-          //                       fontSize: 18, letterSpacing: 0.5),
-          //                   onChanged: (value) {
-          //                     _searchList.clear();
-
-          //                     for (var i in list) {
-          //                       if (i.name
-          //                               .toLowerCase()
-          //                               .contains(value.toLowerCase()) ||
-          //                           i.email
-          //                               .toLowerCase()
-          //                               .contains(value.toLowerCase())) {
-          //                         _searchList.add(i);
-          //                         setState(() {
-          //                           _searchList;
-          //                         });
-          //                       }
-          //                     }
-          //                   },
-          //                   decoration: InputDecoration(
-          //                     prefixIcon: const Icon(Icons.search),
-          //                     hintText: 'Search here',
-          //                     suffixIcon: IconButton(
-          //                         onPressed: () {
-          //                           setState(() {
-          //                             if (_isSearch = true) {
-          //                               _isSearch = false;
-          //                             }
-          //                           });
-          //                         },
-          //                         icon: const Icon(Icons.close)),
-          //                     border: UnderlineInputBorder(
-          //                         borderRadius: BorderRadius.circular(30),
-          //                         borderSide: BorderSide.none),
-          //                     filled: true,
-          //                     fillColor:
-          //                         Theme.of(context).colorScheme.secondary,
-          //                   ),
-          //                 ),
-          //               )
-          //             : Row(
-          //                 crossAxisAlignment: CrossAxisAlignment.center,
-          //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                 children: [
-          //                   const Text(
-          //                     'Chats',
-          //                     style: TextStyle(
-          //                         fontSize: 30, fontWeight: FontWeight.bold),
-          //                   ),
-          //                   IconButton(
-          //                     onPressed: () {
-          //                       setState(() {
-          //                         _isSearch = !_isSearch;
-          //                       });
-          //                     },
-          //                     icon: const Icon(
-          //                       Icons.search,
-          //                       size: 28,
-          //                     ),
-          //                   ),
-          //                 ],
-          //               ),
-          //       ),
-          //     ),
-          //     Expanded(
-          //       child: StreamBuilder(
-          //           stream: APISystem.getAllUsers(),
-          //           builder: (context, snapshot) {
-          //             switch (snapshot.connectionState) {
-          //               //when data loading
-          //               case ConnectionState.waiting:
-          //               case ConnectionState.none:
-          //                 return const Center(
-          //                     child: CircularProgressIndicator());
-
-          //               //when all data is loaded
-          //               case ConnectionState.active:
-          //               case ConnectionState.done:
-          //                 final data = snapshot.data?.docs;
-          //                 list = data
-          //                         ?.map((e) => UserChat.fromJson(e.data()))
-          //                         .toList() ??
-          //                     [];
-
-          //                 if (list.isEmpty) {
-          //                   return const Center(
-          //                     child: Text(
-          //                       'No Chats',
-          //                       style: TextStyle(fontSize: 18),
-          //                     ),
-          //                   );
-          //                 } else {
-          //                   return ListView.builder(
-          //                       physics: const BouncingScrollPhysics(),
-          //                       itemCount: _isSearch
-          //                           ? _searchList.length
-          //                           : list.length,
-          //                       itemBuilder: (context, index) {
-          //                         return ChatList(user: list[index]);
-          //                       });
-          //                 }
-          //             }
-          //           }),
-          //     ),
-          //   ],
-          // ),
         ),
       ),
     );

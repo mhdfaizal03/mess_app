@@ -251,78 +251,77 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _chatInputs() {
     return Padding(
-      padding: EdgeInsets.all(mq.width * .01),
+      padding: EdgeInsets.only(
+          left: mq.width * .011,
+          right: mq.width * .011,
+          bottom: mq.width * .015),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(mq.width * .0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          setState(() => _showEmoji = !_showEmoji);
-                        },
-                        icon: const Icon(Icons.emoji_emotions_outlined)),
-                    Expanded(
-                        child: TextField(
-                      controller: _textController,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      onTap: () {
-                        if (_showEmoji) {
-                          setState(() => _showEmoji = !_showEmoji);
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.secondary,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        FocusScope.of(context).unfocus();
+                        setState(() => _showEmoji = !_showEmoji);
+                      },
+                      icon: const Icon(Icons.emoji_emotions_outlined)),
+                  Expanded(
+                      child: TextField(
+                    controller: _textController,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    onTap: () {
+                      if (_showEmoji) {
+                        setState(() => _showEmoji = !_showEmoji);
+                      }
+                    },
+                    decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Type message here'),
+                  )),
+                  IconButton(
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+
+                        final List<XFile> images =
+                            await picker.pickMultiImage(imageQuality: 70);
+
+                        for (var i in images) {
+                          log('image path: ${i.path}');
+                          setState(() => _isUploading = true);
+                          await APISystem.sentImage(widget.user, File(i.path));
+                          setState(() => _isUploading = false);
                         }
                       },
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Type message here'),
-                    )),
-                    IconButton(
-                        onPressed: () async {
-                          final ImagePicker picker = ImagePicker();
+                      icon: const Icon(Icons.image)),
+                  IconButton(
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
 
-                          final List<XFile> images =
-                              await picker.pickMultiImage(imageQuality: 70);
-
-                          for (var i in images) {
-                            log('image path: ${i.path}');
-                            setState(() => _isUploading = true);
-                            await APISystem.sentImage(
-                                widget.user, File(i.path));
-                            setState(() => _isUploading = false);
-                          }
-                        },
-                        icon: const Icon(Icons.image)),
-                    IconButton(
-                        onPressed: () async {
-                          final ImagePicker picker = ImagePicker();
-
-                          final XFile? image = await picker.pickImage(
-                              source: ImageSource.camera);
-                          if (image != null) {
-                            log('Image path : ${image.path}');
-                            setState(() => _isUploading = true);
-                            await APISystem.sentImage(
-                                widget.user, File(image.path));
-                            setState(() => _isUploading = false);
-                          }
-                        },
-                        icon: const Icon(Icons.camera_alt)),
-                  ],
-                ),
+                        final XFile? image =
+                            await picker.pickImage(source: ImageSource.camera);
+                        if (image != null) {
+                          log('Image path : ${image.path}');
+                          setState(() => _isUploading = true);
+                          await APISystem.sentImage(
+                              widget.user, File(image.path));
+                          setState(() => _isUploading = false);
+                        }
+                      },
+                      icon: const Icon(Icons.camera_alt)),
+                ],
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.only(left: 5, bottom: 6),
             child: FloatingActionButton(
               onPressed: () {
                 if (_textController.text.isNotEmpty) {
@@ -332,7 +331,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 }
               },
               backgroundColor: Theme.of(context).colorScheme.secondary,
-              child: const Icon(Icons.send),
+              child: const Icon(
+                Icons.send,
+                color: Colors.white,
+              ),
             ),
           )
         ],

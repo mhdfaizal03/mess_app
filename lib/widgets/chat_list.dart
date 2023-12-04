@@ -1,6 +1,4 @@
-// import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mess_app/api/api_system.dart';
 import 'package:mess_app/helper/my_date.dart';
@@ -84,13 +82,14 @@ class _ChatListState extends State<ChatList> {
                         SizedBox(
                           width: 5,
                         ),
-                        Text('image')
+                        Text('image'),
                       ],
                     )
                   : Text(_message != null ? _message!.msg : widget.user.about),
               //last message time
               trailing: _message == null
-                  ? null //show nothing when no message sent
+                  ? null
+                  //show nothing when no message sent
                   : _message!.read.isEmpty &&
                           _message!.fromId != APISystem.user.uid
                       ? Container(
@@ -103,7 +102,9 @@ class _ChatListState extends State<ChatList> {
                       //message sent time
                       : Text(
                           MyDate.getLastMessageTime(
-                              context: context, time: _message!.sent),
+                            context: context,
+                            time: _message!.sent,
+                          ),
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary),
                         ));

@@ -34,87 +34,96 @@ class _SettingsPageState extends State<SettingsPage> {
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
-              floating: false,
-              backgroundColor: Theme.of(context).colorScheme.background,
+              floating: true,
+              pinned: true,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
               flexibleSpace: FlexibleSpaceBar(
-                titlePadding: const EdgeInsets.all(25),
+                
+                titlePadding: const EdgeInsets.only(left: 15, bottom: 20),
                 title: Text(
                   'Settings',
                   style: TextStyle(
-                      fontSize: 28,
+                      fontSize: 30,
                       color: Theme.of(context).colorScheme.primary),
                 ),
               ),
-              expandedHeight: 160,
+              expandedHeight: 150,
             ),
             SliverToBoxAdapter(
-              child: StreamBuilder(
-                  stream: APISystem.firestore.collection('users').snapshots(),
-                  builder: (context, snapshot) {
-
-                    return Column(
-                      children: [
-                        ListTile(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProfilePage(
-                                  user: APISystem.me,
+              child: SizedBox(
+                height: mq.height,
+                child: StreamBuilder(
+                    stream: APISystem.firestore.collection('users').snapshots(),
+                    builder: (context, snapshot) {
+                      return Column(
+                        children: [
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ListTile(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfilePage(
+                                    user: APISystem.me,
+                                  ),
+                                ),
+                              );
+                            },
+                            leading: Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(mq.height * .03),
+                                child: CachedNetworkImage(
+                                  width: 50,
+                                  height: 50,
+                                  imageUrl: widget.user.image,
+                                  fit: BoxFit.cover,
+                                  errorWidget: (context, url, error) {
+                                    return const CircleAvatar(
+                                      child: Icon(Icons.person),
+                                    );
+                                  },
                                 ),
                               ),
-                            );
-                          },
-                          leading: Padding(
-                            padding: const EdgeInsets.all(3.0),
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(mq.height * .03),
-                              child: CachedNetworkImage(
-                                width: 50,
-                                height: 50,
-                                imageUrl: widget.user.image,
-                                fit: BoxFit.cover,
-                                errorWidget: (context, url, error) {
-                                  return const CircleAvatar(
-                                    child: Icon(Icons.person),
-                                  );
-                                },
-                              ),
                             ),
+                            title: Text(widget.user.name),
+                            subtitle: Text(widget.user.about),
+                            trailing: IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.qr_code)),
                           ),
-                          title: Text(widget.user.name),
-                          subtitle: Text(widget.user.about),
-                          trailing: IconButton(
-                              onPressed: () {},
-                              icon: const Icon(Icons.qr_code)),
-                        ),
-                        divider,
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        ListTile(
-                          onTap: () async {
-                            await APISystem.updateActiveStatus(false);
+                          divider,
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          ListTile(
+                            onTap: () async {
+                              await APISystem.updateActiveStatus(false);
 
-                            APISystem.auth = FirebaseAuth.instance;
+                              APISystem.auth = FirebaseAuth.instance;
 
-                            Dialogs.showProgressBar(context);
-                            await APISystem.auth.signOut().then((value) async {
-                              await GoogleSignIn().signOut().then((value) {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => const LoginPage()));
+                              Dialogs.showProgressBar(context);
+                              await APISystem.auth
+                                  .signOut()
+                                  .then((value) async {
+                                await GoogleSignIn().signOut().then((value) {
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => const LoginPage()));
+                                });
                               });
-                            });
-                          },
-                          leading: const Icon(Icons.logout),
-                          title: const Text('Logout'),
-                        ),
-                      ],
-                    );
-                  }),
+                            },
+                            leading: const Icon(Icons.logout),
+                            title: const Text('Logout'),
+                          ),
+                        ],
+                      );
+                    }),
+              ),
             ),
           ],
         ));

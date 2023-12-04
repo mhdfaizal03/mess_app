@@ -19,7 +19,7 @@ class _MessageCardState extends State<MessageCard> {
     bool isMe = APISystem.user.uid == widget.message.fromId;
     return InkWell(
         onLongPress: () {
-          _showBottomSheet();
+          _showBottomSheet(isMe);
         },
         child: isMe ? _sendMessage() : _receiveMessage());
   }
@@ -162,7 +162,7 @@ class _MessageCardState extends State<MessageCard> {
     );
   }
 
-  void _showBottomSheet() {
+  void _showBottomSheet(bool isMe) {
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
@@ -171,19 +171,73 @@ class _MessageCardState extends State<MessageCard> {
           return ListView(
             shrinkWrap: true,
             children: [
-              const Text(
-                'Select Profile Picture',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              Container(
+                height: 4,
+                margin: EdgeInsets.symmetric(
+                    vertical: mq.height * .011, horizontal: mq.width * .4),
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              SizedBox(
-                height: mq.height * .02,
+              widget.message.type == Type.text
+                  ? _OptionItems(
+                      icon: const Icon(Icons.copy),
+                      name: 'Copy Text',
+                      onTap: () {})
+                  : _OptionItems(
+                      icon: const Icon(Icons.save_alt_rounded),
+                      name: 'Save image',
+                      onTap: () {}),
+              if (isMe)
+                if (widget.message.type == Type.text && isMe)
+                  _OptionItems(
+                      icon: const Icon(Icons.edit),
+                      name: 'Edit Message',
+                      onTap: () {}),
+              if (isMe)
+                _OptionItems(
+                    icon: const Icon(Icons.delete_forever),
+                    name: 'Delete Message',
+                    onTap: () {}),
+              Divider(
+                color: Colors.grey,
+                endIndent: mq.width * 0.05,
+                indent: mq.width * 0.05,
               ),
+              _OptionItems(
+                  icon: const Icon(Icons.access_time),
+                  name:
+                      'Sent At : ${MyDate.getMessageTime(context: context, time: widget.message.sent)} ',
+                  onTap: () {}),
+              _OptionItems(
+                  icon: const Icon(Icons.remove_red_eye_rounded),
+                  name: widget.message.read.isEmpty
+                      ? "Read At : Not seen yet"
+                      : 'Read At : ${MyDate.getMessageTime(context: context, time: widget.message.read)}',
+                  onTap: () {}),
             ],
           );
         });
+  }
+}
+
+class _OptionItems extends StatelessWidget {
+  final Icon icon;
+  final String name;
+  final VoidCallback onTap;
+  const _OptionItems({
+    required this.icon,
+    required this.name,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(name),
+      leading: icon,
+      onTap: () => onTap(),
+    );
   }
 }

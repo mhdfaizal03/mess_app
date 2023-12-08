@@ -8,6 +8,7 @@ class UserChat {
   late String createAt;
   late String email;
   late String pushToken;
+  late bool isTyping;
   UserChat({
     required this.image,
     required this.name,
@@ -18,6 +19,7 @@ class UserChat {
     required this.createAt,
     required this.email,
     required this.pushToken,
+    required this.isTyping,
   });
 
   UserChat.fromJson(Map<String, dynamic> json) {
@@ -30,6 +32,7 @@ class UserChat {
     createAt = json['create_at'] ?? '';
     email = json['email'] ?? '';
     pushToken = json['push_token'] ?? '';
+    isTyping = json['is_typing'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +46,7 @@ class UserChat {
     data['create_at'] = createAt;
     data['email'] = email;
     data['push_token'] = pushToken;
+    data['is_typing'] = isTyping;
     return data;
   }
 }

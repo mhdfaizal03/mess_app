@@ -50,10 +50,14 @@ class _ChatScreenState extends State<ChatScreen> {
         },
         child: Scaffold(
           appBar: AppBar(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10))),
             backgroundColor: Theme.of(context).colorScheme.secondary,
             automaticallyImplyLeading: false,
             flexibleSpace: Padding(
-              padding: EdgeInsets.only(top: mq.height * 0.034),
+              padding: EdgeInsets.only(top: mq.height * 0.030),
               child: _appBar(),
             ),
           ),
@@ -152,7 +156,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                 if (_showEmoji)
                   SizedBox(
-                    height: mq.height * 0.35,
+                    height: mq.height * 0.30,
                     child: EmojiPicker(
                       textEditingController: _textController,
                       config: Config(
@@ -188,57 +192,93 @@ class _ChatScreenState extends State<ChatScreen> {
               data?.map((e) => UserChat.fromJson(e.data())).toList() ?? [];
 
           return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.arrow_back)),
-              Padding(
-                padding: const EdgeInsets.all(3.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(mq.height * .03),
-                  child: CachedNetworkImage(
-                    width: 40,
-                    height: 40,
-                    imageUrl: widget.user.image,
-                    fit: BoxFit.cover,
-                    errorWidget: (context, url, error) {
-                      return const CircleAvatar(
-                        child: Icon(Icons.person),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: mq.width * 0.028,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Text(
-                    list.isNotEmpty ? list[0].name : widget.user.name,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w500),
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.arrow_back)),
+                  Padding(
+                    padding: const EdgeInsets.all(3.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        width: 40,
+                        height: 40,
+                        imageUrl: widget.user.image,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) {
+                          return const CircleAvatar(
+                            child: Icon(Icons.person),
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                  const SizedBox(
-                    height: 2,
+                  SizedBox(
+                    width: mq.width * 0.028,
                   ),
-                  Text(
-                    list.isNotEmpty
-                        ? list[0].isOnline
-                            ? 'Online'
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        list.isNotEmpty ? list[0].name : widget.user.name,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(
+                        height: 2,
+                      ),
+                      Text(
+                        list.isNotEmpty
+                            ? list[0].isOnline
+                                ? 'Online'
+                                : MyDate.getLastActiveTime(
+                                    context: context,
+                                    lastActive: list[0].lastActive)
                             : MyDate.getLastActiveTime(
                                 context: context,
-                                lastActive: list[0].lastActive)
-                        : MyDate.getLastActiveTime(
-                            context: context,
-                            lastActive: widget.user.lastActive),
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: Theme.of(context).colorScheme.onSecondary),
+                                lastActive: widget.user.lastActive),
+                        style: TextStyle(
+                            fontSize: 13,
+                            color: Theme.of(context).colorScheme.onSecondary),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  PopupMenuButton<String>(
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    color: Theme.of(context).colorScheme.secondary,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    // onSelected: (String result) {
+                    //   // Handle menu item selection
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //     SnackBar(
+                    //       content: Text('Selected: $result'),
+                    //     ),
+                    //   );
+                    // },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
+                      PopupMenuItem<String>(
+                        onTap: () async {
+                          await APISystem.clearChat(widget.user);
+                        },
+                        value: 'Option 1',
+                        child: const Text('clear chat'),
+                      ),
+                    ],
                   ),
                 ],
               )
@@ -254,9 +294,10 @@ class _ChatScreenState extends State<ChatScreen> {
       padding: EdgeInsets.only(
           left: mq.width * .011,
           right: mq.width * .011,
-          bottom: mq.width * .015),
+          bottom: mq.width * .025),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Expanded(
             child: Container(
@@ -288,16 +329,21 @@ class _ChatScreenState extends State<ChatScreen> {
                   )),
                   IconButton(
                       onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
+                        try {
+                          final ImagePicker picker = ImagePicker();
 
-                        final List<XFile> images =
-                            await picker.pickMultiImage(imageQuality: 70);
+                          final List<XFile> images =
+                              await picker.pickMultiImage(imageQuality: 70);
 
-                        for (var i in images) {
-                          log('image path: ${i.path}');
-                          setState(() => _isUploading = true);
-                          await APISystem.sentImage(widget.user, File(i.path));
-                          setState(() => _isUploading = false);
+                          for (var i in images) {
+                            log('image path: ${i.path}');
+                            setState(() => _isUploading = true);
+                            await APISystem.sentImage(
+                                widget.user, File(i.path));
+                            setState(() => _isUploading = false);
+                          }
+                        } catch (e) {
+                          log('an exception happened on $e');
                         }
                       },
                       icon: const Icon(Icons.image)),
@@ -321,7 +367,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 5, bottom: 6),
+            padding: const EdgeInsets.only(left: 5),
             child: FloatingActionButton(
               onPressed: () {
                 if (_textController.text.isNotEmpty) {

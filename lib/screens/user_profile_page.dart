@@ -5,6 +5,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mess_app/helper/dialog.dart';
 // import 'package:image_picker/image_picker.dart';
 // import 'package:mess_app/api/api_system.dart';
 // import 'package:mess_app/helper/dialog.dart';
@@ -48,16 +49,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
           ],
         ),
         appBar: AppBar(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10))),
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
               },
               icon: const Icon(Icons.arrow_back)),
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          title: const Text(
-            'Profile',
-            style: TextStyle(fontSize: 20),
-          ),
+          backgroundColor: Colors.transparent,
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
         body: SingleChildScrollView(
@@ -66,28 +67,38 @@ class _UserProfilePageState extends State<UserProfilePage> {
             child: Column(
               children: [
                 SizedBox(
-                  height: mq.height * .03,
+                  height: mq.height * .02,
                   width: mq.width,
                 ),
                 Stack(
                   children: [
-                    CircleAvatar(
-                      radius: 100,
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    Container(
+                      width: 202,
+                      height: 202,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(3.0),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(mq.height * .5),
-                          child: CachedNetworkImage(
-                            width: 200,
-                            height: 200,
-                            imageUrl: widget.user.image,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) {
-                              return const CircleAvatar(
-                                child: Icon(Icons.person),
-                              );
+                          borderRadius: BorderRadius.circular(20),
+                          child: GestureDetector(
+                            onTap: () {
+                              Dialogs.showFullScreenImage(
+                                  context, widget.user.image);
                             },
+                            child: CachedNetworkImage(
+                              width: 200,
+                              height: 200,
+                              imageUrl: widget.user.image,
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) {
+                                return const CircleAvatar(
+                                  child: Icon(Icons.person),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -95,7 +106,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ],
                 ),
                 SizedBox(
-                  height: mq.height * .01,
+                  height: mq.height * .04,
                 ),
                 Column(
                   children: [
@@ -103,6 +114,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       widget.user.name,
                       style: const TextStyle(
                           fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: mq.height * .02,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -134,15 +148,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                   ],
                 ),
                 SizedBox(
-                  height: mq.height * .02,
-                ),
-                SizedBox(
-                  height: mq.height * .02,
+                  height: mq.height * .03,
                 ),
                 Container(
                   height: mq.height * .07,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(15),
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Center(
@@ -158,7 +169,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 Container(
                   height: mq.height * .07,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(15),
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Center(

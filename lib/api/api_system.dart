@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 // import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mess_app/models/message.dart';
 import 'package:mess_app/models/user_chat.dart';
@@ -13,16 +15,16 @@ import 'package:mess_app/models/user_chat.dart';
 class APISystem {
   //to store self information
   static UserChat me = UserChat(
-    image: user.photoURL.toString(),
-    name: user.displayName.toString(),
-    about: 'Hey I\'m using MessApp',
-    lastActive: '',
-    isOnline: false,
-    id: user.uid,
-    createAt: '',
-    email: user.email,
-    pushToken: '',
-  );
+      image: user.photoURL.toString(),
+      name: user.displayName.toString(),
+      about: 'Hey I\'m using MessApp',
+      lastActive: '',
+      isOnline: false,
+      id: user.uid,
+      createAt: '',
+      email: user.email,
+      pushToken: '',
+      isTyping: false);
 
   //to return current user
   static get user => auth.currentUser!;
@@ -82,16 +84,16 @@ class APISystem {
   static Future<void> userCreate() async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
     final chatUser = UserChat(
-      image: user.photoURL.toString(),
-      name: user.displayName.toString(),
-      about: 'Hey I\'m using MessApp',
-      lastActive: time,
-      isOnline: false,
-      id: user.uid,
-      createAt: time,
-      email: user.email,
-      pushToken: '',
-    );
+        image: user.photoURL.toString(),
+        name: user.displayName.toString(),
+        about: 'Hey I\'m using MessApp',
+        lastActive: time,
+        isOnline: false,
+        id: user.uid,
+        createAt: time,
+        email: user.email,
+        pushToken: '',
+        isTyping: false);
 
     return firestore.collection('users').doc(user.uid).set(chatUser.toJson());
   }
@@ -255,4 +257,70 @@ class APISystem {
 
     await sendMessage(chatUser, imageUrl, Type.image);
   }
+
+  static Future<void> deleteMessage(Message message) async {
+    await firestore
+        .collection('chats/${getConversationID(message.toId)}/messages/')
+        .doc(message.sent)
+        .delete();
+
+    if (message.type == Type.image) {
+      storage.refFromURL(message.msg).delete();
+    }
+  }
+
+  static Future<void> deleteMessageFromUser(
+      Message message, String userId) async {
+    // Delete from sender's messages
+    await firestore
+        .collection('chats/${getConversationID(message.fromId)}/messages/')
+        .doc(message.sent)
+        .delete();
+
+    // If the message is sent to someone else
+    if (message.fromId != userId) {
+      // Delete from receiver's messages
+      await firestore
+          .collection('chats/${getConversationID(message.fromId)}/messages/')
+          .doc(message.sent)
+          .delete();
+    }
+
+    // If the message type is image, delete it from storage
+    if (message.type == Type.image) {
+      await storage.refFromURL(message.msg).delete();
+    }
+  }
+
+  static Future<void> clearChat(UserChat user) async {
+    try {
+      String conversationID = getConversationID(user.id);
+
+      // Get a reference to the messages collection
+      CollectionReference messagesCollection =
+          firestore.collection('chats/$conversationID/messages');
+
+      // Get all messages in the conversation
+      QuerySnapshot messagesSnapshot = await messagesCollection.get();
+
+      // Delete each message
+      for (QueryDocumentSnapshot messageDoc in messagesSnapshot.docs) {
+        await messageDoc.reference.delete();
+      }
+
+      // You may want to notify the UI or perform additional actions here
+      log('Chat cleared successfully');
+    } catch (e) {
+      log('Error clearing chat: $e');
+      // Handle the error as needed
+    }
+  }
+
+    static Future<void> updateMessage(Message message,String updatedMessage) async {
+    await firestore
+        .collection('chats/${getConversationID(message.toId)}/messages/')
+        .doc(message.sent)
+        .update({'msg' : updatedMessage});
+  }
+
 }

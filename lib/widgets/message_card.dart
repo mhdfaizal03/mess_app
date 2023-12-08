@@ -1,9 +1,17 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 import 'package:mess_app/api/api_system.dart';
+import 'package:mess_app/helper/dialog.dart';
 import 'package:mess_app/helper/my_date.dart';
 import 'package:mess_app/main.dart';
 import 'package:mess_app/models/message.dart';
+import 'package:mess_app/screens/profile_page.dart';
 
 class MessageCard extends StatefulWidget {
   final Message message;
@@ -14,6 +22,8 @@ class MessageCard extends StatefulWidget {
 }
 
 class _MessageCardState extends State<MessageCard> {
+  final _formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     bool isMe = APISystem.user.uid == widget.message.fromId;
@@ -29,93 +39,124 @@ class _MessageCardState extends State<MessageCard> {
       APISystem.updateMessageCheckStatus(widget.message);
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Flexible(
-          child: Padding(
-            padding: EdgeInsets.only(top: mq.height * 0.01),
-            child: Container(
-                padding: EdgeInsets.all(widget.message.type == Type.image
-                    ? mq.width * .01
-                    : mq.width * .028),
-                margin: EdgeInsets.symmetric(
-                  horizontal: mq.width * .02,
-                ),
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    color: Theme.of(context).colorScheme.secondary),
-                child: widget.message.type == Type.text
-                    ? Text(widget.message.msg)
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(mq.height * .01),
-                        child: CachedNetworkImage(
-                          width: mq.width * .50,
-                          height: mq.height * .30,
-                          imageUrl: widget.message.msg,
-                          fit: BoxFit.cover,
-                          errorWidget: (context, url, error) {
-                            return const Icon(
-                              Icons.image,
-                              size: 70,
-                            );
-                          },
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width - 60,
+        ),
+        child: Card(
+            elevation: 1,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10))),
+            color: Theme.of(context).colorScheme.secondary,
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            child: widget.message.type == Type.text
+                ? widget.message.msg.length > 20
+                    ? Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 10,
+                              right: 20,
+                              top: 5,
+                              bottom: 20,
+                            ),
+                            child: Text(
+                              widget.message.msg,
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 10,
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 5.0),
+                                  child: Text(
+                                    MyDate.getFormatedTime(
+                                        context: context,
+                                        time: widget.message.sent),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondary,
+                                        fontSize: mq.height * .013),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.only(bottom: 5.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 10,
+                                right: 10,
+                                top: 5,
+                                bottom: 10,
+                              ),
+                              child: Text(
+                                widget.message.msg,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  MyDate.getFormatedTime(
+                                      context: context,
+                                      time: widget.message.sent),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                      fontSize: mq.height * .013),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      )),
-          ),
-        ),
-        Text(
-          MyDate.getFormatedTime(context: context, time: widget.message.sent),
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.onSecondary,
-              fontSize: mq.height * .013),
-        )
-      ],
-    );
-  }
-
-  Widget _sendMessage() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          MyDate.getFormatedTime(context: context, time: widget.message.sent),
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.onSecondary,
-              fontSize: mq.height * .013),
-        ),
-        Flexible(
-          child: Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(top: mq.height * 0.01),
-                child: Container(
-                    padding: EdgeInsets.all(widget.message.type == Type.image
-                        ? mq.width * .01
-                        : mq.width * .028),
-                    margin: EdgeInsets.symmetric(
-                      horizontal: mq.width * .03,
-                      vertical: mq.width * .01,
-                    ),
-                    decoration: BoxDecoration(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                        color: Theme.of(context).colorScheme.secondary),
-                    child: widget.message.type == Type.text
-                        ? Text(widget.message.msg)
-                        : ClipRRect(
+                      )
+                : Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Dialogs.showFullScreenImage(
+                                context, widget.message.msg);
+                          },
+                          child: ClipRRect(
                             borderRadius:
-                                BorderRadius.circular(mq.height * .01),
+                                const BorderRadius.all(Radius.circular(10)),
                             child: CachedNetworkImage(
                               placeholder: (context, url) {
                                 return Container(
-                                  width: mq.width * .50,
-                                  height: mq.height * .30,
+                                  width: mq.width * .60,
+                                  height: mq.height * .40,
                                   decoration: BoxDecoration(
                                     borderRadius:
-                                        BorderRadius.circular(mq.height * .01),
+                                        BorderRadius.circular(mq.height * .03),
                                   ),
                                   child: const Center(
                                       child: CircularProgressIndicator(
@@ -123,8 +164,8 @@ class _MessageCardState extends State<MessageCard> {
                                   )),
                                 );
                               },
-                              width: mq.width * .50,
-                              height: mq.height * .30,
+                              width: mq.width * .60,
+                              height: mq.height * .40,
                               imageUrl: widget.message.msg,
                               fit: BoxFit.cover,
                               errorWidget: (context, url, error) {
@@ -134,36 +175,241 @@ class _MessageCardState extends State<MessageCard> {
                                 );
                               },
                             ),
-                          )),
-              ),
-              widget.message.read.isNotEmpty
-                  ? Positioned(
-                      bottom: 5,
-                      right: 15,
-                      child: Icon(
-                        Icons.done_all_rounded,
-                        color: Colors.blue,
-                        size: mq.width * 0.034,
-                      ),
-                    )
-                  : Positioned(
-                      bottom: 5,
-                      right: 15,
-                      child: Icon(
-                        Icons.done_rounded,
-                        color: Colors.grey[800],
-                        size: mq.width * 0.034,
-                      ),
-                    )
-            ],
-          ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              MyDate.getFormatedTime(
+                                  context: context, time: widget.message.sent),
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSecondary,
+                                  fontSize: mq.height * .013),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )),
+      ),
+    );
+  }
+
+  Widget _sendMessage() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width - 60,
         ),
-      ],
+        child: Card(
+            elevation: 1,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10))),
+            color: Theme.of(context).colorScheme.secondary,
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            child: widget.message.type == Type.text
+                ? widget.message.msg.length > 20
+                    ? Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 10,
+                              right: 20,
+                              top: 5,
+                              bottom: 25,
+                            ),
+                            child: Text(
+                              widget.message.msg,
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 10,
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(bottom: 5, top: 10),
+                                  child: Text(
+                                    MyDate.getFormatedTime(
+                                        context: context,
+                                        time: widget.message.sent),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondary,
+                                        fontSize: mq.height * .013),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                widget.message.read.isNotEmpty
+                                    ? const Icon(
+                                        Icons.done_all,
+                                        size: 18,
+                                        color: Colors.blue,
+                                      )
+                                    : const Icon(
+                                        Icons.done,
+                                        size: 18,
+                                        color: Colors.grey,
+                                      )
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 10,
+                              right: 10,
+                              top: 5,
+                              bottom: 15,
+                            ),
+                            child: Text(
+                              widget.message.msg,
+                              style: const TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  MyDate.getFormatedTime(
+                                      context: context,
+                                      time: widget.message.sent),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                      fontSize: mq.height * .013),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                widget.message.read.isNotEmpty
+                                    ? const Icon(
+                                        Icons.done_all,
+                                        size: 18,
+                                        color: Colors.blue,
+                                      )
+                                    : const Icon(
+                                        Icons.done,
+                                        size: 18,
+                                        color: Colors.grey,
+                                      )
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                : Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          child: GestureDetector(
+                            onTap: () {
+                              Dialogs.showFullScreenImage(
+                                  context, widget.message.msg);
+                            },
+                            child: CachedNetworkImage(
+                              placeholder: (context, url) {
+                                return Container(
+                                  width: mq.width * .60,
+                                  height: mq.height * .40,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.circular(mq.height * .03),
+                                  ),
+                                  child: const Center(
+                                      child: CircularProgressIndicator(
+                                    strokeWidth: 1.5,
+                                  )),
+                                );
+                              },
+                              width: mq.width * .60,
+                              height: mq.height * .40,
+                              imageUrl: widget.message.msg,
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) {
+                                return const Icon(
+                                  Icons.image,
+                                  size: 70,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              MyDate.getFormatedTime(
+                                  context: context, time: widget.message.sent),
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSecondary,
+                                  fontSize: mq.height * .013),
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            widget.message.read.isNotEmpty
+                                ? const Icon(
+                                    Icons.done_all,
+                                    size: 18,
+                                    color: Colors.blue,
+                                  )
+                                : const Icon(
+                                    Icons.done,
+                                    size: 18,
+                                    color: Colors.grey,
+                                  )
+                          ],
+                        ),
+                      ],
+                    ),
+                  )),
+      ),
     );
   }
 
   void _showBottomSheet(bool isMe) {
     showModalBottomSheet(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
         context: context,
@@ -184,22 +430,151 @@ class _MessageCardState extends State<MessageCard> {
                   ? _OptionItems(
                       icon: const Icon(Icons.copy),
                       name: 'Copy Text',
-                      onTap: () {})
+                      onTap: () async {
+                        await Clipboard.setData(
+                                ClipboardData(text: widget.message.msg))
+                            .then((value) {
+                          Navigator.pop(context);
+
+                          Dialogs.showSnackBar(context, 'text copied');
+                        });
+                      })
                   : _OptionItems(
                       icon: const Icon(Icons.save_alt_rounded),
                       name: 'Save image',
-                      onTap: () {}),
+                      onTap: () async {
+                        await downloadFile();
+                      }),
               if (isMe)
                 if (widget.message.type == Type.text && isMe)
                   _OptionItems(
                       icon: const Icon(Icons.edit),
                       name: 'Edit Message',
-                      onTap: () {}),
-              if (isMe)
-                _OptionItems(
-                    icon: const Icon(Icons.delete_forever),
-                    name: 'Delete Message',
-                    onTap: () {}),
+                      onTap: () {
+                        String updateMsg = widget.message.msg;
+                        Navigator.pop(context);
+
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.background,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                          ),
+                          context: context,
+                          builder: (context) {
+                            return SingleChildScrollView(
+                              physics: const ClampingScrollPhysics(),
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  bottom:
+                                      MediaQuery.of(context).viewInsets.bottom,
+                                ),
+                                child: Form(
+                                  key: _formkey,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      top: mq.height * .02,
+                                      left: mq.height * .02,
+                                      right: mq.height * .02,
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        const Text(
+                                          'Enter the message',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                        SizedBox(
+                                          height: mq.height * .02,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: TextFormField(
+                                            onChanged: (value) =>
+                                                updateMsg = value,
+                                            autofocus: true,
+                                            onSaved: (val) =>
+                                                APISystem.me.about = val ?? '',
+                                            validator: (val) =>
+                                                val != null && val.isEmpty
+                                                    ? 'Enter atleast a word'
+                                                    : null,
+                                            initialValue: widget.message.msg,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              fillColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                borderSide: BorderSide.none,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('Cancel'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                // Add your save logic here
+
+                                                if (_formkey.currentState
+                                                        ?.validate() ??
+                                                    false) {
+                                                  // The form is valid, process the data
+                                                  Navigator.pop(context);
+                                                  APISystem.updateMessage(
+                                                      widget.message,
+                                                      updateMsg);
+                                                }
+                                                Dialogs.showSnackBar(
+                                                  context,
+                                                  'edited successfully',
+                                                );
+                                              },
+                                              child: const Text('Update'),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }),
+              // if (isMe)
+              _OptionItems(
+                  icon: const Icon(Icons.delete_forever),
+                  name: 'Delete Message',
+                  onTap: () async {
+                    if (isMe) {
+                      await APISystem.deleteMessage(widget.message)
+                          .then((value) {
+                        Navigator.pop(context);
+                      });
+                    } else {
+                      _showDeleteConfirmationDialog(
+                              context: context,
+                              message: widget.message,
+                              userId: widget.message.fromId)
+                          .then((value) => Navigator.pop(context));
+                    }
+                  }),
               Divider(
                 color: Colors.grey,
                 endIndent: mq.width * 0.05,
@@ -219,6 +594,76 @@ class _MessageCardState extends State<MessageCard> {
             ],
           );
         });
+  }
+
+  Future<void> downloadFile() async {
+    try {
+      // Replace this URL with the actual URL of the file you want to download
+      var fileUrl = widget.message.msg;
+
+      var httpClient = HttpClient();
+      var request = await httpClient.getUrl(Uri.parse(fileUrl));
+      var response = await request.close();
+
+      if (response.statusCode == 200) {
+        var bytes = await consolidateHttpClientResponseBytes(response);
+
+        var time = DateTime.now().millisecondsSinceEpoch;
+        var path = "/storage/emulated/0/Download";
+
+        var file = File(path);
+        await file.writeAsBytes(bytes);
+
+        log("File downloaded and saved to: $path");
+      } else {
+        log("Failed to download the file. Status code: ${response.statusCode}");
+      }
+    } catch (error) {
+      log("Error downloading file: $error");
+    }
+  }
+
+  Future<void> _showDeleteConfirmationDialog(
+      {required BuildContext context,
+      required Message message,
+      required String userId}) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          title: const Text('Delete Message'),
+          content: const Text(
+              'Are you sure you want to delete this message from user?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Perform the delete operation
+                // await deleteMessageFromUser(message, userId);
+
+                // Close the dialog
+                Navigator.pop(context);
+                try {
+                  await APISystem.deleteMessageFromUser(message, userId)
+                      .then((value) => Navigator.pop(context));
+                } catch (e) {
+                  log('something happened on $e');
+                }
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 

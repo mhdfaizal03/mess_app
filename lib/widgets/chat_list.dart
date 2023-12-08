@@ -34,80 +34,110 @@ class _ChatListState extends State<ChatList> {
           if (list.isNotEmpty) {
             _message = list[0];
           }
+
+          var unreadMessageCount = _message?.fromId != APISystem.user.uid
+              ? list.where((message) => message.read.isEmpty).length
+              : null;
+
           return ListTile(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => ChatScreen(
-                              user: widget.user,
-                            )));
-              },
-              leading: Padding(
-                padding: const EdgeInsets.all(3.0),
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) {
-                          return ProfileDialog(user: widget.user);
-                        });
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(mq.height * .03),
-                    child: CachedNetworkImage(
-                      width: 50,
-                      height: 50,
-                      imageUrl: widget.user.image,
-                      fit: BoxFit.cover,
-                      errorWidget: (context, url, error) {
-                        return const CircleAvatar(
-                          child: Icon(Icons.person),
-                        );
-                      },
-                    ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => ChatScreen(
+                            user: widget.user,
+                          )));
+            },
+            leading: Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: InkWell(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (_) {
+                        return ProfileDialog(user: widget.user);
+                      });
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    width: 50,
+                    height: 50,
+                    imageUrl: widget.user.image,
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) {
+                      return const CircleAvatar(
+                        child: Icon(Icons.person),
+                      );
+                    },
                   ),
                 ),
               ),
-              //user name
-              title: Text(widget.user.name),
-              //last message
-              subtitle: _message?.type == Type.image
-                  ? const Row(
-                      children: [
-                        Icon(
-                          Icons.image,
-                          size: 20,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text('image'),
-                      ],
-                    )
-                  : Text(_message != null ? _message!.msg : widget.user.about),
-              //last message time
-              trailing: _message == null
-                  ? null
-                  //show nothing when no message sent
-                  : _message!.read.isEmpty &&
-                          _message!.fromId != APISystem.user.uid
-                      ? Container(
-                          height: 20,
-                          width: 20,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.green),
-                        )
-                      //message sent time
-                      : Text(
-                          MyDate.getLastMessageTime(
-                            context: context,
-                            time: _message!.sent,
+            ),
+            //user name
+            title: Text(widget.user.name),
+            //last message
+
+            subtitle: _message?.type == Type.image
+                ? const Row(
+                    children: [
+                      Icon(
+                        Icons.image,
+                        size: 20,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text('image'),
+                    ],
+                  )
+                : Text(
+                    _message != null ? _message!.msg : widget.user.about,
+                    maxLines: 1,
+                  ),
+            //last message time
+            trailing: _message == null
+                ? null
+                //show nothing when no message sent
+                : _message!.read.isEmpty &&
+                        _message!.fromId != APISystem.user.uid
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            MyDate.getLastMessageTime(
+                              context: context,
+                              time: _message!.sent,
+                            ),
+                            style: TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary),
                           ),
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary),
-                        ));
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 20,
+                            width: 20,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Theme.of(context).colorScheme.secondary),
+                            child: Center(
+                              child: Text('$unreadMessageCount'),
+                            ),
+                          ),
+                        ],
+                      )
+                    //message sent time
+                    : Text(
+                        MyDate.getLastMessageTime(
+                          context: context,
+                          time: _message!.sent,
+                        ),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSecondary),
+                      ),
+          );
         });
   }
 }

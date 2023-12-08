@@ -34,16 +34,24 @@ class _SettingsPageState extends State<SettingsPage> {
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
-              floating: true,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(0.0),
+                  bottomRight: Radius.circular(50.0),
+                ),
+              ),
+              // floating: true,
               pinned: true,
+              stretch: true,
+              bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(0), child: Container()),
               backgroundColor: Theme.of(context).colorScheme.secondary,
               flexibleSpace: FlexibleSpaceBar(
-                
-                titlePadding: const EdgeInsets.only(left: 15, bottom: 20),
+                titlePadding: const EdgeInsets.only(left: 12, bottom: 25),
                 title: Text(
                   'Settings',
                   style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 25,
                       color: Theme.of(context).colorScheme.primary),
                 ),
               ),
@@ -74,8 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             leading: Padding(
                               padding: const EdgeInsets.all(3.0),
                               child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.circular(mq.height * .03),
+                                borderRadius: BorderRadius.circular(10),
                                 child: CachedNetworkImage(
                                   width: 50,
                                   height: 50,

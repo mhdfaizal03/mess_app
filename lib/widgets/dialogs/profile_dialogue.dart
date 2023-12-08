@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mess_app/helper/dialog.dart';
 import 'package:mess_app/main.dart';
 import 'package:mess_app/models/user_chat.dart';
 import 'package:mess_app/screens/user_profile_page.dart';
@@ -26,17 +27,22 @@ class ProfileDialog extends StatelessWidget {
             Align(
               alignment: Alignment.center,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(mq.height * .35),
-                child: CachedNetworkImage(
-                  width: mq.width * .44,
-                  height: mq.width * .44,
-                  imageUrl: user.image,
-                  fit: BoxFit.cover,
-                  errorWidget: (context, url, error) {
-                    return const CircleAvatar(
-                      child: Icon(CupertinoIcons.person),
-                    );
+                borderRadius: BorderRadius.circular(15),
+                child: GestureDetector(
+                  onTap: () {
+                    Dialogs.showFullScreenImage(context, user.image);
                   },
+                  child: CachedNetworkImage(
+                    width: mq.width * .44,
+                    height: mq.width * .44,
+                    imageUrl: user.image,
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) {
+                      return const CircleAvatar(
+                        child: Icon(CupertinoIcons.person),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

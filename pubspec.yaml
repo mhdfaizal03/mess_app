@@ -72,7 +72,14 @@ dependencies:
 
   #for calling rest APIs
   http: ^1.1.0
+
+
   flutter_notification_channel: ^2.0.0
+
+
+  custom_clippers: ^2.0.0
+  full_screen_image: ^2.0.0
+  photo_view: ^0.14.0
 
 dev_dependencies:
   flutter_test:

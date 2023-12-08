@@ -35,7 +35,8 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.secondary,
+          centerTitle: true,
+          backgroundColor: Colors.transparent,
           title: const Text(
             'Profile',
             style: TextStyle(fontSize: 20),
@@ -48,42 +49,52 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               children: [
                 SizedBox(
-                  height: mq.height * .03,
+                  height: mq.height * .05,
                   width: mq.width,
                 ),
                 Stack(
                   children: [
-                    CircleAvatar(
-                      radius: 100,
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    Container(
+                      height: 202,
+                      width: 202,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(3.0),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(mq.height * .5),
-                          child: CachedNetworkImage(
-                            width: 200,
-                            height: 200,
-                            imageUrl: widget.user.image,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) {
-                              return const CircleAvatar(
-                                child: Icon(Icons.person),
-                              );
+                          borderRadius: BorderRadius.circular(20),
+                          child: GestureDetector(
+                            onTap: () {
+                              Dialogs.showFullScreenImage(
+                                  context, widget.user.image);
                             },
+                            child: CachedNetworkImage(
+                              width: 200,
+                              height: 200,
+                              imageUrl: widget.user.image,
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) {
+                                return const CircleAvatar(
+                                  child: Icon(Icons.person),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
                     ),
                     Positioned(
-                      bottom: 10,
-                      right: 10,
+                      bottom: 0,
+                      right: 0,
                       child: GestureDetector(
                         onTap: () {
                           _showPictureBottomSheet();
                         },
                         child: CircleAvatar(
                           backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).colorScheme.onSecondary,
                           radius: 25,
                           child: const Icon(Icons.camera_alt_rounded),
                         ),
@@ -92,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 SizedBox(
-                  height: mq.height * .01,
+                  height: mq.height * .03,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -120,12 +131,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 SizedBox(
-                  height: mq.height * .02,
+                  height: mq.height * .03,
                 ),
                 Container(
                   height: mq.height * .07,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(15),
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Center(
@@ -135,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       trailing: IconButton(
                         onPressed: () {
                           showModalBottomSheet(
-                            isScrollControlled: true,
+                            // isScrollControlled: true,
                             backgroundColor:
                                 Theme.of(context).colorScheme.background,
                             shape: const RoundedRectangleBorder(
@@ -189,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   .secondary,
                                               border: OutlineInputBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(30),
+                                                    BorderRadius.circular(15),
                                                 borderSide: BorderSide.none,
                                               ),
                                             ),
@@ -243,7 +254,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Container(
                   height: mq.height * .07,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(15),
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Center(
@@ -304,7 +315,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   .secondary,
                                               border: OutlineInputBorder(
                                                 borderRadius:
-                                                    BorderRadius.circular(30),
+                                                    BorderRadius.circular(15),
                                                 borderSide: BorderSide.none,
                                               ),
                                             ),
@@ -353,7 +364,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Container(
                   height: mq.height * .07,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(15),
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                   child: Center(
@@ -388,6 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _showPictureBottomSheet() {
     showModalBottomSheet(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
         context: context,
@@ -396,12 +408,12 @@ class _ProfilePageState extends State<ProfilePage> {
             shrinkWrap: true,
             children: [
               Container(
-                height: 4,
-                margin: EdgeInsets.symmetric(
-                    vertical: mq.height * .011, horizontal: mq.width * .4),
+                height: 3,
+                margin:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 170),
                 decoration: BoxDecoration(
                   color: Colors.grey,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(30),
                 ),
               ),
               const Text(
@@ -467,6 +479,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         // width: 30,
                       )),
                 ],
+              ),
+              const SizedBox(
+                height: 40,
               )
             ],
           );

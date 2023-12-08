@@ -64,10 +64,18 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
           body: CustomScrollView(
             slivers: [
               SliverAppBar(
-                floating: true,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(_isSearch ? 0 : 50.0),
+                  ),
+                ),
+                // floating: true,
                 pinned: true,
                 stretch: true,
                 elevation: 4,
+                bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(0),
+                    child: Container()),
                 automaticallyImplyLeading: false,
                 backgroundColor: Theme.of(context).colorScheme.secondary,
                 flexibleSpace: FlexibleSpaceBar(
@@ -84,7 +92,7 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
                                 controller: _searchController,
                                 autofocus: true,
                                 style: const TextStyle(
-                                    fontSize: 10, letterSpacing: 0.5),
+                                    fontSize: 15, letterSpacing: 0.5),
                                 onChanged: (value) {
                                   _searchList.clear();
 
@@ -145,7 +153,7 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
                               Text(
                                 'Chats',
                                 style: TextStyle(
-                                    fontSize: 30,
+                                    fontSize: 25,
                                     color:
                                         Theme.of(context).colorScheme.primary),
                               ),
@@ -159,11 +167,11 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
                                   },
                                   icon: const Icon(
                                     Icons.search_rounded,
-                                    size: 25,
+                                    size: 20,
                                   ))
                             ],
                           )),
-                expandedHeight: 150,
+                expandedHeight: _isSearch ? 50 : 150,
               ),
               SliverToBoxAdapter(
                 child: SizedBox(

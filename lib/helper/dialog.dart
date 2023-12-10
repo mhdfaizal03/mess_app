@@ -43,31 +43,45 @@ class Dialogs {
       builder: (BuildContext context) {
         return SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
-          child: Container(
-            color: Colors.black,
-            constraints: BoxConstraints(
-              maxHeight: mq.height,
-            ),
-            child: Tooltip(
-              message: 'swipe 2 finger to close',
-              
-              showDuration: const Duration(seconds: 2),
-              child: Center(
-                child: InteractiveViewer(
-                  maxScale: 5.0,
-                  minScale: 0.01,
-                  boundaryMargin: const EdgeInsets.symmetric(vertical: 10),
-                  child: CachedNetworkImage(
-                    imageUrl: imageUrl,
-                    fit: BoxFit.contain,
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
+          child: Stack(
+            children: [
+              Container(
+                color: Colors.black,
+                constraints: BoxConstraints(
+                  maxHeight: mq.height,
+                ),
+                child: Tooltip(
+                  message: 'swipe 2 finger to close',
+                  showDuration: const Duration(seconds: 2),
+                  child: Center(
+                    child: InteractiveViewer(
+                      maxScale: 5.0,
+                      minScale: 0.01,
+                      boundaryMargin: const EdgeInsets.symmetric(vertical: 0),
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) =>
+                            const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+              AppBar(
+                backgroundColor: Colors.transparent,
+                leading: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    )),
+              ),
+            ],
           ),
         );
       },

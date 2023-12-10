@@ -89,8 +89,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                   imageUrl: widget.user.image,
                                   fit: BoxFit.cover,
                                   errorWidget: (context, url, error) {
-                                    return const CircleAvatar(
-                                      child: Icon(Icons.person),
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: const Icon(Icons.person),
                                     );
                                   },
                                 ),

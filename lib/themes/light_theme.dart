@@ -11,8 +11,8 @@ ThemeData lightTheme = ThemeData(
     ),
   ),
   colorScheme: ColorScheme.light(
-      background: Color.fromARGB(255, 244, 240, 240),
+      background: const Color.fromARGB(255, 244, 240, 240),
       primary: Colors.black,
-      secondary: Color.fromARGB(204, 154, 165, 231),
+      secondary: const Color.fromARGB(204, 190, 191, 198),
       onSecondary: Colors.grey[600]!),
 );

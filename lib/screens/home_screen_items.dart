@@ -1,9 +1,11 @@
 import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mess_app/api/api_system.dart';
 import 'package:mess_app/main.dart';
 import 'package:mess_app/models/user_chat.dart';
+import 'package:mess_app/screens/add_user.dart';
 import 'package:mess_app/widgets/chat_list.dart';
 
 class HomeScreenItems extends StatefulWidget {
@@ -60,6 +62,22 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
           }
         },
         child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            elevation: 10,
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddUser(),
+                  ));
+            },
+            child: Icon(
+              CupertinoIcons.person_2,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
           backgroundColor: Theme.of(context).colorScheme.background,
           body: CustomScrollView(
             slivers: [

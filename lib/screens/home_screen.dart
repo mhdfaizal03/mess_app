@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mess_app/api/api_system.dart';
 import 'package:mess_app/models/user_chat.dart';
@@ -13,83 +12,74 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   List<UserChat> list = [];
-  int index = 0;
 
-  void onChangedTabs(int newIndex) {
-    setState(() {
-      index = newIndex;
-    });
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.secondary,
-      extendBody: true,
-      floatingActionButton: FloatingActionButton(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        elevation: 10,
-        onPressed: () async {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AddUser(),
-              ));
-        },
-        child: Icon(
-          CupertinoIcons.person_2,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(40.0),
-        ),
-        child: BottomNavigationBar(
-          selectedFontSize: 15,
-          elevation: 5,
-          currentIndex: index,
-          onTap: onChangedTabs,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home_outlined,
-                size: 30,
-              ),
-              label: 'Home',
-              activeIcon: Icon(
-                Icons.home,
-                size: 32,
-              ),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.settings_outlined,
-                size: 30,
-              ),
-              label: 'Settings',
-              activeIcon: Icon(
-                Icons.settings,
-                size: 32,
-              ),
-            ),
-          ],
-          selectedItemColor: Theme.of(context).colorScheme.primary,
-          unselectedItemColor: Colors.grey[600],
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          enableFeedback: true,
-        ),
-      ),
-      body: IndexedStack(
-        index: index,
+      body: TabBarView(
+        controller: _tabController,
         children: [
           const HomeScreenItems(),
           SettingsPage(user: APISystem.me),
         ],
       ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondary,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+        ),
+        child: SafeArea(
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(
+                  icon: Icon(
+                    Icons.home_outlined,
+                    size: 30,
+                  ),
+                  text: 'Home',
+                ),
+                Tab(
+                  icon: Icon(
+                    Icons.settings_outlined,
+                    size: 30,
+                  ),
+                  text: 'Settings',
+                ),
+              ],
+              
+              labelColor: Theme.of(context).colorScheme.primary,
+              unselectedLabelColor: Colors.grey[600],
+              labelStyle: const TextStyle(fontSize: 14),
+              unselectedLabelStyle: const TextStyle(fontSize: 14),
+            ),
+          ),
+        ),
+      ),
     );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }

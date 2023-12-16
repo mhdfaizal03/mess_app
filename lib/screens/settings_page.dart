@@ -117,12 +117,18 @@ class _SettingsPageState extends State<SettingsPage> {
                               await APISystem.auth
                                   .signOut()
                                   .then((value) async {
-                                await GoogleSignIn().signOut().then((value) {
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => const LoginPage()));
-                                });
+                                await GoogleSignIn().signOut().then(
+                                  (value) {
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => LoginPage(
+                                            onTap: () => APISystem,
+                                          ),
+                                        ),
+                                        (route) => false);
+                                  },
+                                );
                               });
                             },
                             leading: const Icon(Icons.logout),

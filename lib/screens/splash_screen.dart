@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/services.dart';
 import 'package:mess_app/api/api_system.dart';
 import 'package:mess_app/main.dart';
+import 'package:mess_app/screens/authentication/auth_page.dart';
 import 'package:mess_app/screens/authentication/login_page.dart';
 import 'package:mess_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const LoginPage(),
+            builder: (_) => const AuthPage(),
           ),
         );
       }

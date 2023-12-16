@@ -47,7 +47,7 @@ dependencies:
   firebase_auth: ^4.10.1
 
   #for handling google sign in
-  google_sign_in: ^6.1.5
+  google_sign_in: ^6.1.6
 
   # for adding svg pictures into the app
   svg_flutter: ^0.0.1

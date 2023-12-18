@@ -3,6 +3,7 @@ import 'package:mess_app/api/api_system.dart';
 import 'package:mess_app/main.dart';
 import 'package:mess_app/models/user_chat.dart';
 import 'package:mess_app/widgets/chat_list.dart';
+import 'package:mess_app/widgets/find_contacts.dart';
 
 class AddUser extends StatefulWidget {
   const AddUser({super.key});
@@ -140,7 +141,7 @@ class _AddUserState extends State<AddUser> {
                               itemCount:
                                   _isSearch ? _searchList.length : list.length,
                               itemBuilder: (context, index) {
-                                return ChatList(user: list[index]);
+                                return FindContacts(user: list[index]);
                               });
                         }
                     }

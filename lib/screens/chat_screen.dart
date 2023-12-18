@@ -211,7 +211,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         imageUrl: widget.user.image,
                         fit: BoxFit.cover,
                         errorWidget: (context, url, error) {
-                          return const CircleAvatar(
+                          return const ClipRRect(
                             child: Icon(Icons.person),
                           );
                         },
@@ -261,14 +261,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     color: Theme.of(context).colorScheme.secondary,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
-                    // onSelected: (String result) {
-                    //   // Handle menu item selection
-                    //   ScaffoldMessenger.of(context).showSnackBar(
-                    //     SnackBar(
-                    //       content: Text('Selected: $result'),
-                    //     ),
-                    //   );
-                    // },
+                    onSelected: (String result) {
+                      // Handle menu item selection
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Selected: $result'),
+                        ),
+                      );
+                    },
                     itemBuilder: (BuildContext context) =>
                         <PopupMenuEntry<String>>[
                       PopupMenuItem<String>(

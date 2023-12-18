@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mess_app/api/api_system.dart';
 import 'package:mess_app/models/user_chat.dart';
+import 'package:mess_app/screens/authentication/login_or_register.dart';
 import 'package:mess_app/screens/authentication/login_page.dart';
 import 'package:mess_app/screens/home_screen.dart';
 
@@ -22,9 +23,7 @@ class _AuthPageState extends State<AuthPage> {
             if (snapshot.hasData) {
               return const HomeScreen();
             } else {
-              return LoginPage(
-                onTap: () => APISystem.auth,
-              );
+              return LoginOrRegister();
             }
           }),
     );

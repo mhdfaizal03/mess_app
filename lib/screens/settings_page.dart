@@ -23,6 +23,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final currentUser = APISystem.me;
   List<UserChat> list = [];
   @override
   Widget build(BuildContext context) {
@@ -69,15 +70,27 @@ class _SettingsPageState extends State<SettingsPage> {
                             height: 10,
                           ),
                           ListTile(
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              final Map<String, dynamic>? result =
+                                  await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ProfilePage(
-                                    user: APISystem.me,
-                                  ),
+                                  builder: (context) =>
+                                      ProfilePage(user: currentUser),
                                 ),
                               );
+
+                              // Check if there's updated information
+                              if (result != null) {
+                                setState(() {
+                                  // Update the current user information using the received updatedUserInfo
+                                  currentUser.name =
+                                      result['name'] ?? currentUser.name;
+                                  currentUser.about =
+                                      result['about'] ?? currentUser.about;
+                                  // Update other user properties similarly
+                                });
+                              }
                             },
                             leading: Padding(
                               padding: const EdgeInsets.all(3.0),

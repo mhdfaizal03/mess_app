@@ -94,7 +94,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                               imageUrl: widget.user.image,
                               fit: BoxFit.cover,
                               errorWidget: (context, url, error) {
-                                return const CircleAvatar(
+                                return const ClipRRect(
                                   child: Icon(Icons.person),
                                 );
                               },

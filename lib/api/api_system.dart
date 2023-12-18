@@ -17,7 +17,7 @@ class APISystem {
   static UserChat me = UserChat(
       image: user.photoURL.toString(),
       name: user.displayName.toString(),
-      about: 'Hey I\'m using MessApp',
+      about: 'Hey I\'m using Chatifly',
       lastActive: '',
       isOnline: false,
       id: user.uid,
@@ -86,7 +86,7 @@ class APISystem {
     final chatUser = UserChat(
         image: user.photoURL.toString(),
         name: user.displayName.toString(),
-        about: 'Hey I\'m using MessApp',
+        about: 'Hey I\'m using Chatifly',
         lastActive: time,
         isOnline: false,
         id: user.uid,
@@ -316,11 +316,11 @@ class APISystem {
     }
   }
 
-    static Future<void> updateMessage(Message message,String updatedMessage) async {
+  static Future<void> updateMessage(
+      Message message, String updatedMessage) async {
     await firestore
         .collection('chats/${getConversationID(message.toId)}/messages/')
         .doc(message.sent)
-        .update({'msg' : updatedMessage});
+        .update({'msg': updatedMessage});
   }
-
 }

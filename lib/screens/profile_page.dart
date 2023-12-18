@@ -14,7 +14,7 @@ import 'package:mess_app/models/user_chat.dart';
 
 class ProfilePage extends StatefulWidget {
   final UserChat user;
-  const ProfilePage({super.key, required this.user});
+  const ProfilePage({Key? key, required this.user}) : super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -35,6 +35,11 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back)),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           title: const Text(
@@ -67,20 +72,28 @@ class _ProfilePageState extends State<ProfilePage> {
                           borderRadius: BorderRadius.circular(20),
                           child: GestureDetector(
                             onTap: () {
-                              Dialogs.showFullScreenImage(
-                                  context, widget.user.image);
+                              if (widget.user.image.isNotEmpty) {
+                                Dialogs.showFullScreenImage(
+                                    context, widget.user.image);
+                              } else {
+                                Dialogs.showFullScreenImage(
+                                    context, 'No profile picture');
+                              }
                             },
-                            child: CachedNetworkImage(
-                              width: 200,
-                              height: 200,
-                              imageUrl: widget.user.image,
-                              fit: BoxFit.cover,
-                              errorWidget: (context, url, error) {
-                                return const CircleAvatar(
-                                  child: Icon(Icons.person),
-                                );
-                              },
-                            ),
+                            child: widget.user.image.isNotEmpty
+                                ? CachedNetworkImage(
+                                    width: 200,
+                                    height: 200,
+                                    imageUrl: widget.user.image,
+                                    placeholder: (context, url) => const Center(
+                                        child: CircularProgressIndicator(
+                                      strokeWidth: 1.5,
+                                    )),
+                                    fit: BoxFit.cover,
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.person),
+                                  )
+                                : const Icon(Icons.person),
                           ),
                         ),
                       ),
@@ -218,10 +231,19 @@ class _ProfilePageState extends State<ProfilePage> {
                                             ),
                                             TextButton(
                                               onPressed: () {
-                                                // Add your save logic here
                                                 if (_formkey.currentState!
                                                     .validate()) {
                                                   _formkey.currentState!.save();
+                                                  // Create a map containing the updated user information
+                                                  Map<String, dynamic>
+                                                      updatedUserInfo = {
+                                                    'name': APISystem.me.name,
+                                                    'about': APISystem.me.about,
+                                                    // Add other fields as needed
+                                                  };
+                                                  // Pass the updatedUserInfo back to the previous screen
+                                                  Navigator.pop(
+                                                      context, updatedUserInfo);
                                                   APISystem.updateUserExist()
                                                       .then((value) =>
                                                           Dialogs.showSnackBar(
@@ -229,7 +251,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                             'Profile updated successfully',
                                                           ));
                                                 }
-                                                Navigator.pop(context);
+                                                // Navigator.pop(context);
                                               },
                                               child: const Text('Save'),
                                             ),

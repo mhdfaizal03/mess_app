@@ -9,8 +9,9 @@ import 'package:mess_app/screens/add_user.dart';
 import 'package:mess_app/widgets/chat_list.dart';
 
 class HomeScreenItems extends StatefulWidget {
-
-  const HomeScreenItems({super.key});
+  const HomeScreenItems({
+    super.key,
+  });
 
   @override
   State<HomeScreenItems> createState() => _HomeScreenItemsState();
@@ -33,10 +34,10 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
         if (message.toString().contains('pause')) {
           APISystem.updateActiveStatus(false);
         }
-      }
 
-      if (message.toString().contains('inactive')) {
-        APISystem.updateActiveStatus(false);
+        if (message.toString().contains('inactive')) {
+          APISystem.updateActiveStatus(false);
+        }
       }
 
       return Future.value(message);
@@ -47,6 +48,7 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
   List<UserChat> list = [];
   final List<UserChat> _searchList = [];
   bool _isSearch = false;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -116,15 +118,18 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
                                   _searchList.clear();
 
                                   for (var i in list) {
-                                    if (i.name
+                                    if (i.name.toLowerCase().contains(value
                                             .toLowerCase()
-                                            .contains(value.toLowerCase()) ||
-                                        i.email
+                                            .toUpperCase()
+                                            .toLowerCase()) ||
+                                        i.email.toLowerCase().contains(value
                                             .toLowerCase()
-                                            .contains(value.toLowerCase()) ||
-                                        i.id
                                             .toLowerCase()
-                                            .contains(value.toLowerCase())) {
+                                            .toLowerCase()) ||
+                                        i.id.toLowerCase().contains(value
+                                            .toLowerCase()
+                                            .toUpperCase()
+                                            .toLowerCase())) {
                                       _searchList.add(i);
                                       setState(() {
                                         _searchList;
@@ -194,7 +199,7 @@ class _HomeScreenItemsState extends State<HomeScreenItems> {
               ),
               SliverToBoxAdapter(
                 child: SizedBox(
-                  height: mq.height,
+                  height: mq.height, // Replace mq with your MediaQuery value
                   child: StreamBuilder(
                       stream: APISystem.getAllUsers(),
                       builder: (context, snapshot) {

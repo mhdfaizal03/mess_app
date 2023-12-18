@@ -32,17 +32,23 @@ class ProfileDialog extends StatelessWidget {
                   onTap: () {
                     Dialogs.showFullScreenImage(context, user.image);
                   },
-                  child: CachedNetworkImage(
-                    width: mq.width * .44,
-                    height: mq.width * .44,
-                    imageUrl: user.image,
-                    fit: BoxFit.cover,
-                    errorWidget: (context, url, error) {
-                      return const CircleAvatar(
-                        child: Icon(CupertinoIcons.person),
-                      );
-                    },
-                  ),
+                  child: user.image.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: CachedNetworkImage(
+                            width: mq.width * .44,
+                            height: mq.height * .20,
+                            imageUrl: user.image,
+                            placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(
+                              strokeWidth: 1.5,
+                            )),
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.person),
+                          ),
+                        )
+                      : const Icon(Icons.person),
                 ),
               ),
             ),

@@ -10,19 +10,20 @@ import 'package:mess_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:mess_app/screens/home_screen.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final Function() onTap;
-  const LoginPage({super.key, required this.onTap});
+  const RegisterPage({super.key, required this.onTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   double _currentOpacity = 0;
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   final value = GlobalKey<FormState>();
 
@@ -37,96 +38,87 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  _googleSignin() {
-    Dialogs.showProgressBar(context);
-    _signInWithGoogle().then((user) async {
-      Navigator.pop(context);
-      if (user != null) {
-        print('\n user: ${user.user}');
-        print('\n userAdditionalDetail: ${user.additionalUserInfo}');
+  // _googleSignUp() {
+  //   Dialogs.showProgressBar(context);
+  //   _signInWithGoogle().then((user) async {
+  //     Navigator.pop(context);
+  //     if (user != null) {
+  //       print('\n user: ${user.user}');
+  //       print('\n userAdditionalDetail: ${user.additionalUserInfo}');
 
-        if (await (APISystem.isUserExist())) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const HomeScreen(),
-            ),
-          );
-        } else {
-          await APISystem.userCreate()
-              .then((value) => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const HomeScreen(),
-                    ),
-                  ));
-        }
-      }
-    });
-  }
+  //       if (await (APISystem.isUserExist())) {
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (_) => const HomeScreen(),
+  //           ),
+  //         );
+  //       } else {
+  //         await APISystem.userCreate()
+  //             .then((value) => Navigator.pushReplacement(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder: (_) => const HomeScreen(),
+  //                   ),
+  //                 ));
+  //       }
+  //     }
+  //   });
+  // }
 
-  Future<UserCredential?> _signInWithGoogle() async {
-    // Trigger the authentication flow
-    try {
-      await InternetAddress.lookup('google.com');
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  // Future<UserCredential?> _signInWithGoogle() async {
+  //   // Trigger the authentication flow
+  //   try {
+  //     await InternetAddress.lookup('google.com');
+  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+  //     // Obtain the auth details from the request
+  //     final GoogleSignInAuthentication? googleAuth =
+  //         await googleUser?.authentication;
 
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
+  //     // Create a new credential
+  //     final credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth?.accessToken,
+  //       idToken: googleAuth?.idToken,
+  //     );
 
-      // Once signed in, return the UserCredential
-      return await APISystem.auth.signInWithCredential(credential);
-    } catch (e) {
-      print('_signInWithGoogle : $e');
-      Dialogs.showSnackBar(
-        context,
-        'Something went wrong ( Check your internet connection! )',
-      );
-    }
-    return null;
-  }
+  //     // Once signed in, return the UserCredential
+  //     return await APISystem.auth.signInWithCredential(credential);
+  //   } catch (e) {
+  //     print('_signInWithGoogle : $e');
+  //     Dialogs.showSnackBar(
+  //       context,
+  //       'Something went wrong ( Check your internet connection! )',
+  //     );
+  //   }
+  //   return null;
+  // }
 
   bool _isTap = true;
 
   final _formKey = GlobalKey<FormState>();
 
-  void signUserIn() async {
+  void signUserUp() async {
     Dialogs.showProgressBar(context);
 
     try {
-      await APISystem.auth.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        // Email doesn't exist in the authentication system
-        Dialogs.showSnackBar(context, 'Invalid Email');
-      } else if (e.code == 'wrong-password') {
-        // Incorrect password
-        Dialogs.showSnackBar(context, 'Incorrect Password');
-      } else {
-        // Handle other Firebase Auth exceptions if needed
-        Dialogs.showSnackBar(context, 'Authentication Failed: ${e.message}');
+      if (passwordController.text == confirmPasswordController.text) {
+        await APISystem.auth
+            .createUserWithEmailAndPassword(
+              email: emailController.text,
+              password: passwordController.text,
+            )
+            .then((value) => Navigator.restorablePushAndRemoveUntil(
+                context,
+                (context, arguments) =>
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                (route) => false));
       }
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context); // Dismiss progress bar
       // Handle other exceptions that might occur during the authentication process
       Dialogs.showSnackBar(context, 'Authentication Failed: $e');
     }
-
-    Navigator.pop(context); // Dismiss progress bar
   }
 
   @override
@@ -139,24 +131,14 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                SafeArea(
+                const SafeArea(
                   child: Column(
                     children: [
-                      Center(
-                        child: AnimatedOpacity(
-                          opacity: _currentOpacity,
-                          duration: const Duration(seconds: 2),
-                          child: Image.asset(
-                            'images/icon.png',
-                            width: mq.width * 0.40,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
+                      SizedBox(
                         height: 30,
                       ),
-                      const Text(
-                        'Welcome back to Chatifly',
+                      Text(
+                        'Create account',
                         style: TextStyle(
                           // color: Colors.black,
                           fontSize: 32.0,
@@ -188,9 +170,10 @@ class _LoginPageState extends State<LoginPage> {
                                       r"^(?=.*[A-Za-z]).{3,}.[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z].{1,2}$");
                                   if (value == null || value.isEmpty) {
                                     return 'Enter your email';
-                                  } else {
-                                    return null;
+                                  } else if (!email.hasMatch(value)) {
+                                    return 'enter a valid email';
                                   }
+                                  return null;
                                 },
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(
@@ -223,9 +206,10 @@ class _LoginPageState extends State<LoginPage> {
                                       r'^(?=.*?[A-Za-z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
                                   if (value == null || value.isEmpty) {
                                     return 'Enter your password';
-                                  } else {
-                                    return null;
+                                  } else if (!password.hasMatch(value)) {
+                                    return 'enter a strong password';
                                   }
+                                  return null;
                                 },
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(
@@ -265,6 +249,40 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             const SizedBox(
+                              height: 15,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: TextFormField(
+                                obscureText: _isTap,
+                                controller: confirmPasswordController,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Enter your password';
+                                  } else if (passwordController.text !=
+                                      confirmPasswordController.text) {
+                                    return 'Password does not match';
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  prefixIcon: const Icon(
+                                    Icons.password,
+                                  ),
+                                  hintText: "Confirm Password",
+                                  fillColor:
+                                      Theme.of(context).colorScheme.secondary,
+                                  filled: true,
+                                  border: const OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
                               height: 25,
                             ),
                             Padding(
@@ -291,11 +309,11 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                       onPressed: () {
                                         if (_formKey.currentState!.validate()) {
-                                          return signUserIn();
+                                          return signUserUp();
                                         }
                                       },
                                       child: Text(
-                                        'Sign in',
+                                        'Sign Up',
                                         style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
@@ -325,27 +343,6 @@ class _LoginPageState extends State<LoginPage> {
                                 )
                               ],
                             ),
-                            // RichText(
-                            //   text: TextSpan(
-                            //     text: 'Forgot your login details? ',
-                            //     style: TextStyle(
-                            //       color: Theme.of(context).colorScheme.primary,
-                            //       fontSize: 12,
-                            //     ),
-                            //     children: [
-                            //       TextSpan(
-                            //         onEnter: (event) {},
-                            //         text: 'Forgot your password.',
-                            //         style: TextStyle(
-                            //             decoration: TextDecoration.underline,
-                            //             fontWeight: FontWeight.bold,
-                            //             color: Theme.of(context)
-                            //                 .colorScheme
-                            //                 .primary),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
                           ]),
                     ),
                   ],
@@ -391,7 +388,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       onPressed: () {
-                        _googleSignin();
+                        // _googleSignin();
                       },
                       child: Image.asset(
                         'images/google.png',
@@ -406,11 +403,11 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Not a member ?'),
+                    const Text('Already have an account ?'),
                     GestureDetector(
                       onTap: widget.onTap,
                       child: const Text(
-                        'Register now',
+                        'Login now.',
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),
